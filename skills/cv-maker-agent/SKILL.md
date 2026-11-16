@@ -15,14 +15,19 @@ Re-order, re-word, emphasise and trim. **Never invent** employers, titles, dates
 
 ## 1. Master CV (build once, reuse)
 
-- Look for an existing artifact titled **"Ritika – Master CV"** (list artifacts). If it exists, use it.
-- If not: ask Ritika for her latest full CV (PDF/DOCX). Also pull `mcp__Indeed__get_resume` for skills and certifications. Merge both into one master CV doc with **every** role, bullet, metric, project, skill and certification. This is the fact base, not a CV to send, so length doesn't matter.
+- **Reuse first.** The Master CV is Ritika's existing doc **"Ritika Chouhan – AI Product Owner CV"**. Read it with the Claude Docs connector and use it as the fact base. Only if it can't be found (list artifacts, query "CV") look for one titled "Ritika – Master CV".
+- Never create a second master CV. If neither exists, ask Ritika for her latest full CV (PDF/DOCX). Also pull `mcp__Indeed__get_resume` for skills and certifications. Merge both into one master CV doc with **every** role, bullet, metric, project, skill and certification. This is the fact base, not a CV to send, so length doesn't matter.
 - Known facts (from Indeed): ~15 yrs; current role Business Solutions Consultant (AI Product Owner, BFSI) at Coforge since Nov 2021; earlier Ciber India, HCL Infosystems, Gaia Smart Cities (Senior Manager), Keyideas, VizExec, QSpear, IAP Company; Master's ABV-IIITM Gwalior, Bachelor's Jabalpur Engineering College; certifications incl. SAFe Agilist 6.0, CSPO, AZ-305, Azure OpenAI/RAG, Responsible AI, AI governance, Purview/AI security, M365 Copilot and Copilot Studio.
 - When Ritika gives a new fact or metric in chat, add it to the master CV.
 
 ## 2. Pick the JD
 
 - Default: the **Shortlisted** rows (score ≥ 70) in the job-hunt tracker that have no tailored CV yet, highest score first. Process up to 5 per run unless asked for more.
+- **Reuse an existing tailored CV before making a new one.** List artifacts (query "Ritika – CV") and check the tracker's Tailored CV column:
+  - Same company and role already has a CV → reuse it: re-read it, update only the lines the JD needs, and keep its link. Don't create a duplicate.
+  - A CV exists for a **similar** role (same role family) → copy its tailored summary, skills order and bullet order as the starting point, then adjust for this JD.
+  - Otherwise build a new one from the Master CV.
+  - Record in the match report which CV was reused and what changed.
 - Or: a JD/URL Ritika pastes. Fetch the full text (`mcp__Firecrawl__jobs_search` with `url`, `mcp__Indeed__get_job_details`, or WebFetch).
 
 ## 3. Analyse the JD
@@ -57,6 +62,8 @@ Framing tips for this profile:
 ## 6. Truth check
 
 Compare every bullet and skill in the tailored CV against the master CV. Remove or flag anything that isn't supported. List all `[metric?]` placeholders for Ritika to fill.
+
+Then hand the CV to **ved-guardrail-agent** for its line-by-line CV check (section 2). The CV is `CV ready` only after the guardrail result is PASS; include its report line in the match report.
 
 ## 7. ATS check
 

@@ -11,6 +11,7 @@ and report daily, with a human approval gate before anything is submitted, sent 
                                   hr-outreach        hr-outreach (green/yellow/red priority)
 ```
 
+Every stage's output passes through **ved-guardrail-agent** (line-by-line source check) before it moves on.
 All stages share one tracker (a Claude Sheets workbook: Job Tracker, Interview Priority, Scoring Rules tabs).
 
 ## Repo layout
@@ -21,6 +22,7 @@ All stages share one tracker (a Claude Sheets workbook: Job Tracker, Interview P
 | `skills/job-hunt-agent/` | Searches company boards and job sites, scores each JD 0–100 against the CV, shortlists, applies with approval |
 | `skills/cv-maker-agent/` | Tailors an ATS-friendly CV per JD from a master CV, with a truth check and a match report |
 | `skills/hr-outreach-scheduler-agent/` | Recruiter outreach, inbox triage, interview scheduling, colour-coded interview priority |
+| `skills/ved-guardrail-agent/` | Guardrail and hallucination checker: verifies every CV line, tracker row, email and code change against its source before it passes a gate |
 | `dashboard/` | Page and data schema for the pipeline dashboard (a Claude Data artifact) |
 | `cv-downloads/` | Page that serves the tailored CV PDFs for download (PDFs are not committed) |
 | `scheduled/` | The daily scheduled-run prompt |
@@ -40,7 +42,8 @@ All stages share one tracker (a Claude Sheets workbook: Job Tracker, Interview P
 
 ## Guardrails
 
-- Truthful tailoring only: nothing is added to a CV that isn't in the master CV.
+- Truthful tailoring only: nothing is added to a CV that isn't in the master CV, and the guardrail agent checks every line.
+- Existing CVs are reused (master CV and same/similar-role tailored CVs) instead of duplicated.
 - Approval before every application, email and calendar change; scheduled runs never pass a gate.
 - No current CTC disclosed without explicit approval.
 - Max 5 tailored CVs, 3 applications per company and 2 outreach emails per company per run.

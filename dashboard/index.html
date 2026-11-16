@@ -91,7 +91,6 @@
   const READY = ['CV ready', 'Approved to apply', 'Applied', 'Outreach sent', 'Interview', 'Offer'];
   const APPLIED = ['Applied', 'Outreach sent', 'Interview', 'Offer'];
   const STAGES = ['Maybe', 'Shortlisted', 'CV ready', 'Approved to apply', 'Applied', 'Outreach sent', 'Interview', 'Offer', 'Rejected', 'Skipped', 'Withdrawn'];
-  window.vedStages = STAGES;
 
   dash.calc('summary', {
     title: 'Pipeline counts',
@@ -140,7 +139,6 @@
   }
 
   function hbar(el, rows, keyField, segs, colorFor, labelFor) {
-    const d = el.ownerDocument;
     const w = Math.max(240, el.clientWidth);
     const rowH = 26;
     const h = rows.length * rowH + 8;

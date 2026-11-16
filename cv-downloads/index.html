@@ -43,11 +43,14 @@ const CVS = [
 ];
 const list = document.getElementById("list");
 const buttons = [];
+const link = (href, text) => { const a = document.createElement("a"); a.href = href; a.target = "_blank"; a.rel = "noopener"; a.textContent = text; return a; };
 for (const cv of CVS) {
   const row = document.createElement("div"); row.className = "row";
   const left = document.createElement("div");
-  left.innerHTML = `<div class="role">${cv.n}. ${cv.role}</div>
-    <div class="meta">${cv.where} · <a href="${cv.doc}" target="_blank" rel="noopener">Open CV doc</a> · <a href="${cv.apply}" target="_blank" rel="noopener">Apply page</a></div>`;
+  const role = document.createElement("div"); role.className = "role"; role.textContent = `${cv.n}. ${cv.role}`;
+  const meta = document.createElement("div"); meta.className = "meta";
+  meta.append(`${cv.where} · `, link(cv.doc, "Open CV doc"), " · ", link(cv.apply, "Apply page"));
+  left.append(role, meta);
   const right = document.createElement("div"); right.className = "actions";
   const status = document.createElement("span"); status.className = "status";
   const btn = document.createElement("button"); btn.textContent = "Download PDF"; btn.disabled = true;
