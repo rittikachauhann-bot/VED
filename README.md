@@ -14,10 +14,48 @@ and report daily, with a human approval gate before anything is submitted, sent 
 Every stage's output passes through **ved-guardrail-agent** (line-by-line source check) before it moves on.
 All stages share one tracker (a Claude Sheets workbook: Job Tracker, Interview Priority, Scoring Rules tabs).
 
+## LangGraph runtime (`ved/`)
+
+The pipeline is also implemented as a [LangGraph](https://github.com/langchain-ai/langgraph) `StateGraph`, so runs
+are stateful, resumable and testable outside Claude.
+
+```
+preflight → source_score → tailor_cvs → guardrail_cvs ─┬─ live ──► gate_a ⏸ → apply → outreach → guardrail_emails → gate_b ⏸ ─┐
+                                                       └─ scheduled ────────────────────────────────────────────────────────────┤
+report ◄── book ◄── gate_c ⏸ ◄── live ── schedule ◄── triage ◄──────────────────────────────────────────────────────────────────┘
+   ▲                                   └── scheduled ──► report            (status mode: preflight → report)
+```
+
+- **Gates** pause with `interrupt()` and resume with `Command(resume=<decision>)`. A checkpointer (SQLite in the
+  CLI) keeps state between pause and resume, so a run can be picked up later.
+- **State machine** (`ved/state.py`): every status change goes through `tracker.move()`, which rejects illegal
+  moves (e.g. `Shortlisted → Applied` without approval) and writes an audit line.
+- **Guardrail nodes** (`ved/guardrail.py`) check every CV and email line against the Master CV and JD: numbers
+  not in the source and overstatement phrases are removed; any pay/CTC mention blocks the draft for Ritika.
+- **Adapters** (`ved/adapters.py`): the graph only calls interfaces. Offline defaults run from fixture files;
+  apply and send are *unavailable by default* and report "blocked" instead of pretending. Plug in real
+  adapters (browser, Gmail, Calendar, Firecrawl) to go live.
+- **Limits**: 5 CVs per run, 3 applications and 2 outreach emails per company.
+
+```bash
+pip install -e ".[dev]"
+python -m pytest -q                                   # 8 tests: scoring, tracker, guardrail, all gates, CLI resume
+python -m ved run --mode live --thread 2026-11-16 \
+  --jobs examples/jobs.json --master-cv examples/master_cv.md
+# ⏸ Paused at gate A … then:
+python -m ved resume --thread 2026-11-16 --master-cv examples/master_cv.md \
+  --decision '{"approve": ["<job id>"], "decline": {"<job id>": "reason"}}'
+```
+
+Gate decisions: A `{"approve": [...], "decline": {id: reason}}` · B `{"send": [...]}` · C `{"slots": {id: "slot"}}`.
+
 ## Repo layout
 
 | Path | What it is |
 |---|---|
+| `ved/` | LangGraph implementation: state, graph, guardrail, scoring, tracker, adapters, CLI |
+| `tests/` | pytest suite for the graph |
+| `examples/` | Made-up jobs and a placeholder master CV for running the graph offline |
 | `skills/job-pipeline-orchestrator/` | **VED**, the orchestrator: stages, state machine, approval gates, run modes |
 | `skills/job-hunt-agent/` | Searches company boards and job sites, scores each JD 0–100 against the CV, shortlists, applies with approval |
 | `skills/cv-maker-agent/` | Tailors an ATS-friendly CV per JD from a master CV, with a truth check and a match report |

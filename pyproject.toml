@@ -1,0 +1,15 @@
+[project]
+name = "ved"
+version = "0.2.0"
+description = "VED: agentic job-search pipeline orchestrated with LangGraph"
+requires-python = ">=3.10"
+dependencies = ["langgraph>=1.0", "langgraph-checkpoint-sqlite>=2.0"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools]
+packages = ["ved"]
+
+[tool.ruff]
+line-length = 120
