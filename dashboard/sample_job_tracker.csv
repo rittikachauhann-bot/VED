@@ -1,0 +1,4 @@
+score,status,company,title,location,sponsorship,pay_range,job_url,date_found,cv_url,coverage,applied_on,follow_up_due,notes
+88,CV ready,Example Bank,Senior AI Product Manager,"Bengaluru, India",Not needed (India),Not listed,https://example.com/jobs/1,2026-11-16,https://example.com/cv/1,0.8,,,Sample row
+72,Shortlisted,Example AI Lab,"Product Manager, Safety","London, UK",Sponsors visas,£120K–£160K,https://example.com/jobs/2,2026-11-16,,,,,Sample row
+58,Maybe,Example Cloud,Technical Program Manager,"New York, US",Unknown,$180K–$240K,https://example.com/jobs/3,2026-11-16,,,,,Sample row

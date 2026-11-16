@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ritika – Tailored CV Downloads</title>
+<style>
+  :root { --ink:#1d1d1f; --muted:#6b6b70; --line:#e6e4df; --bg:#faf9f6; --card:#fff; --accent:#1f5f4a; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#ececec; --muted:#a3a3a8; --line:#333; --bg:#161616; --card:#1f1f1f; --accent:#6fc2a2; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 20px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 600; }
+  p.lead { color: var(--muted); margin: 0 0 24px; }
+  .row { display:grid; grid-template-columns: 1fr auto; gap: 12px 20px; align-items:center;
+         background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .role { font-weight:600; }
+  .meta { color:var(--muted); font-size:13px; }
+  .meta a { color: var(--accent); }
+  .actions { display:flex; gap:8px; align-items:center; }
+  button { font:inherit; font-size:14px; padding:7px 14px; border-radius:8px; border:1px solid var(--accent);
+           background:var(--accent); color:#fff; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  .status { font-size:12px; color:var(--muted); min-width: 64px; }
+  .note { color:var(--muted); font-size:13px; margin-top:20px; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tailored CVs – approved applications</h1>
+  <p class="lead">One PDF per role, exported from your CV docs on 16 Nov 2026. Download the PDF to upload it, or open the doc to review and edit it first.</p>
+  <div id="list"></div>
+  <p class="note" id="note">Edited a CV doc after 16 Nov? Download the new version from the doc itself (its menu offers PDF and Word), or ask VED to refresh these files.</p>
+</main>
+<script>
+const CVS = [
+  { n:1, role:"PayU – Senior Product Manager AI", where:"Bengaluru", file:"cvs/Ritika_PayU_SeniorPM_AI_CV.pdf", doc:"https://claude.ai/artifact/4EGWJ3pxWoKp8r5W1AqN79", apply:"https://careers.payu.in/talentcommunity/apply/54314880/?locale=en_GB" },
+  { n:2, role:"Amazon – Senior PM-Technical, Business Analytics", where:"Hyderabad / Bengaluru", file:"cvs/Ritika_Amazon_SeniorPMT_BusinessAnalytics_CV.pdf", doc:"https://claude.ai/artifact/NmJkeGbVx8wfnYgX9jsZ6z", apply:"https://www.amazon.jobs/applicant/jobs/10601871/apply" },
+  { n:3, role:"Anthropic – Manager, Technical Deployment (FS)", where:"New York", file:"cvs/Ritika_Anthropic_TechnicalDeploymentManager_FS_CV.pdf", doc:"https://claude.ai/artifact/LG6As9RDU9tWZWNJJdBbfS", apply:"https://job-boards.greenhouse.io/anthropic/jobs/5391004008" },
+  { n:4, role:"Anthropic – Product Manager, Enterprise Privacy", where:"San Francisco / New York", file:"cvs/Ritika_Anthropic_PM_EnterprisePrivacy_CV.pdf", doc:"https://claude.ai/artifact/B8WRgr4X11LnRwXf731YXM", apply:"https://job-boards.greenhouse.io/anthropic/jobs/5434369008" },
+  { n:5, role:"Anthropic – AI Outcomes Manager, Financial Services", where:"US", file:"cvs/Ritika_Anthropic_AIOutcomesManager_FS_CV.pdf", doc:"https://claude.ai/artifact/6bkfWS32ohuFFsZZGdLGcR", apply:"https://job-boards.greenhouse.io/anthropic/jobs/5391062008" }
+];
+const list = document.getElementById("list");
+const buttons = [];
+for (const cv of CVS) {
+  const row = document.createElement("div"); row.className = "row";
+  const left = document.createElement("div");
+  left.innerHTML = `<div class="role">${cv.n}. ${cv.role}</div>
+    <div class="meta">${cv.where} · <a href="${cv.doc}" target="_blank" rel="noopener">Open CV doc</a> · <a href="${cv.apply}" target="_blank" rel="noopener">Apply page</a></div>`;
+  const right = document.createElement("div"); right.className = "actions";
+  const status = document.createElement("span"); status.className = "status";
+  const btn = document.createElement("button"); btn.textContent = "Download PDF"; btn.disabled = true;
+  btn.addEventListener("click", () => save(cv, btn, status));
+  buttons.push(btn);
+  right.append(status, btn); row.append(left, right); list.append(row);
+}
+let downloads = null;
+(async () => {
+  try { downloads = await (window.claude && window.claude.use ? window.claude.use("downloads") : null); } catch (e) { downloads = null; }
+  if (downloads) { buttons.forEach(b => b.disabled = false); }
+  else {
+    buttons.forEach(b => b.style.display = "none");
+    document.getElementById("note").textContent = "Downloads aren't available in this view. Open each CV doc and use its download menu (PDF or Word).";
+  }
+})();
+async function save(cv, btn, status) {
+  btn.disabled = true; status.textContent = "Preparing…";
+  try {
+    const res = await fetch(cv.file);
+    if (!res.ok) throw new Error("fetch");
+    const blob = await res.blob();
+    await downloads.save({ filename: cv.file.split("/").pop(), data: blob });
+    status.textContent = "Saved";
+  } catch (e) {
+    const code = e && e.code;
+    status.textContent = code === "declined" ? "Cancelled" : code === "rate_limited" ? "Try again" : "Not saved";
+  } finally { btn.disabled = false; }
+}
+</script>
+</body>
+</html>
