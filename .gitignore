@@ -1,0 +1,5 @@
+# Personal data: never commit
+*.pdf
+*.docx
+job_tracker.csv
+cvs/
