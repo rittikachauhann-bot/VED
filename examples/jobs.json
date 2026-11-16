@@ -1,0 +1,14 @@
+[
+  {"company": "Example Bank", "title": "Senior AI Product Manager", "location": "London, UK",
+   "sponsorship": "Yes", "pay_range": "", "job_url": "https://example.com/jobs/1",
+   "jd_text": "Own the roadmap for AI products in banking. Work with engineering and compliance on agile delivery.",
+   "fit": {"role_fit": 0.95, "skills": 0.9, "domain": 1.0, "seniority": 0.9, "feasibility": 0.8}},
+  {"company": "Example Cloud", "title": "Principal Product Manager, Conversational AI", "location": "Bengaluru, India",
+   "sponsorship": "N/A", "pay_range": "", "job_url": "https://example.com/jobs/2",
+   "jd_text": "Lead conversational assistants and roadmap for enterprise customers using agile delivery.",
+   "fit": {"role_fit": 0.8, "skills": 0.75, "domain": 0.5, "seniority": 0.9, "feasibility": 1.0}},
+  {"company": "Example Retail", "title": "Data Analyst", "location": "Remote",
+   "sponsorship": "No", "pay_range": "", "job_url": "https://example.com/jobs/3",
+   "jd_text": "SQL dashboards.",
+   "fit": {"role_fit": 0.2, "skills": 0.4, "domain": 0.2, "seniority": 0.3, "feasibility": 0.5}}
+]

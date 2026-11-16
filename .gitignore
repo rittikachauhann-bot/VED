@@ -3,3 +3,7 @@
 *.docx
 job_tracker.csv
 cvs/
+data/
+*.sqlite
+__pycache__/
+.pytest_cache/

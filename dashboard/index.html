@@ -1,0 +1,223 @@
+<meta name="dash-one-writer">
+<style>
+  .ved { font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .ved-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0 0 var(--cds-gap-xs); }
+  .ved-lead { color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-lg); font-size: var(--cds-font-size-body); }
+  .ved-lead b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+  .ved-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-lg); }
+  .ved-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+  .ved-kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .ved-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 32px; line-height: 1.2; font-variant-numeric: tabular-nums; min-height: 38px; }
+  .ved-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-lg); }
+  .ved h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-sm); }
+  .ved-chart { position: relative; min-height: 220px; }
+  .ved-chart svg text { fill: var(--cds-text-secondary); font-size: var(--cds-font-size-caption); }
+  .ved-chart .val { fill: var(--color-fg); font-variant-numeric: tabular-nums; }
+  .ved-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--cds-radius); padding: 4px 8px; font-size: var(--cds-font-size-caption); white-space: nowrap; }
+  .ved-tablewrap { overflow-x: auto; }
+  .ved-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); }
+  .ved-table th { text-align: left; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .ved-table td { padding: 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .ved-table td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  .ved-table th.num { text-align: right; }
+  .ved-pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); white-space: nowrap; }
+  .ved-pill.good { border-color: var(--color-ok); color: var(--color-ok); }
+  .ved-pill.warn { border-color: var(--color-warn); color: var(--color-warn); }
+  .ved-pill.bad { border-color: var(--color-bad); color: var(--color-bad); }
+  .ved-filter { margin: 0 0 var(--cds-gap-sm); display: flex; gap: var(--cds-gap-sm); align-items: center; flex-wrap: wrap; }
+  .ved-muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .ved a { color: inherit; }
+  [data-dash-source-state=refreshing] { opacity: .5; }
+</style>
+
+<div class="ved">
+  <h1 class="ved-title" id="title">VED job pipeline</h1>
+  <p class="ved-lead" id="takeaway">VED is tracking <b data-draw="t-tracked" data-source="summary" data-field="tracked" data-row="0">—</b> roles: <b data-draw="t-shortlisted" data-source="summary" data-field="shortlisted" data-row="0">—</b> score 70 or more, <b data-draw="t-ready" data-source="summary" data-field="ready" data-row="0">—</b> have a tailored CV, <b data-draw="t-applied" data-source="summary" data-field="applied" data-row="0">—</b> applied and <b data-draw="t-interviews" data-source="summary" data-field="interviews" data-row="0">—</b> at interview.</p>
+
+  <div class="ved-kpis" id="kpis">
+    <div class="ved-card" id="kpi-tracked"><div class="ved-kpi-label">Roles tracked</div><div class="ved-kpi-value" data-draw="k-tracked" data-source="summary" data-field="tracked" data-row="0">—</div></div>
+    <div class="ved-card" id="kpi-shortlisted"><div class="ved-kpi-label">Strong matches (score 70+)</div><div class="ved-kpi-value" data-draw="k-shortlisted" data-source="summary" data-field="shortlisted" data-row="0">—</div></div>
+    <div class="ved-card" id="kpi-ready"><div class="ved-kpi-label">Tailored CV ready</div><div class="ved-kpi-value" data-draw="k-ready" data-source="summary" data-field="ready" data-row="0">—</div></div>
+    <div class="ved-card" id="kpi-applied"><div class="ved-kpi-label">Applied</div><div class="ved-kpi-value" data-draw="k-applied" data-source="summary" data-field="applied" data-row="0">—</div></div>
+    <div class="ved-card" id="kpi-interviews"><div class="ved-kpi-label">Interviews</div><div class="ved-kpi-value" data-draw="k-interviews" data-source="summary" data-field="interviews" data-row="0">—</div></div>
+    <div class="ved-card" id="kpi-offers"><div class="ved-kpi-label">Offers</div><div class="ved-kpi-value" data-draw="k-offers" data-source="summary" data-field="offers" data-row="0">—</div></div>
+  </div>
+
+  <div class="ved-grid">
+    <div class="ved-card" id="stage-card">
+      <h2 id="stage-heading">Roles at each pipeline stage</h2>
+      <div class="ved-chart" id="stage-chart" data-draw="stages" data-source="by_status"></div>
+    </div>
+    <div class="ved-card" id="company-card">
+      <h2 id="company-heading">Roles by company, strong matches highlighted</h2>
+      <div class="ved-chart" id="company-chart" data-draw="companies" data-source="by_company"></div>
+    </div>
+  </div>
+
+  <div class="ved-card" id="roles-card">
+    <h2 id="roles-heading">All roles, best match first</h2>
+    <div class="ved-filter">
+      <label class="ved-muted" for="status-filter">Show</label>
+      <select class="dash-select" id="status-filter" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        <option value="active">Active (not skipped or closed)</option>
+        <option value="Approved to apply">Approved to apply</option>
+        <option value="Applied">Applied</option>
+        <option value="Interview">Interview</option>
+        <option value="Shortlisted">Shortlisted</option>
+        <option value="Maybe">Maybe</option>
+      </select>
+    </div>
+    <div class="ved-tablewrap">
+      <table class="ved-table" id="roles-table" data-source="tracker" data-row-key="job_url">
+        <thead><tr>
+          <th class="num" data-field="score">Score</th>
+          <th data-field="status">Status</th>
+          <th data-field="company">Company</th>
+          <th data-field="title">Role</th>
+          <th data-field="location">Location</th>
+          <th class="num" data-field="coverage">JD coverage</th>
+          <th data-field="cv_url">Tailored CV</th>
+          <th data-field="pay_range">Pay range</th>
+        </tr></thead>
+        <tbody data-draw="roles"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const num = (v) => (v === null || v === undefined || v === '' ? null : +v);
+  const READY = ['CV ready', 'Approved to apply', 'Applied', 'Outreach sent', 'Interview', 'Offer'];
+  const APPLIED = ['Applied', 'Outreach sent', 'Interview', 'Offer'];
+  const STAGES = ['Maybe', 'Shortlisted', 'CV ready', 'Approved to apply', 'Applied', 'Outreach sent', 'Interview', 'Offer', 'Rejected', 'Skipped', 'Withdrawn'];
+
+  dash.calc('summary', {
+    title: 'Pipeline counts',
+    description: 'Counts of tracked roles by how far each has got.',
+    inputs: ['tracker'],
+    fn: (tracker) => [{
+      tracked: tracker.length,
+      shortlisted: tracker.filter((r) => +r.score >= 70).length,
+      ready: tracker.filter((r) => READY.includes(r.status)).length,
+      applied: tracker.filter((r) => APPLIED.includes(r.status)).length,
+      interviews: tracker.filter((r) => r.status === 'Interview').length,
+      offers: tracker.filter((r) => r.status === 'Offer').length,
+    }],
+  });
+
+  dash.calc('by_status', {
+    title: 'Roles per stage',
+    description: 'Number of roles at each status, in pipeline order.',
+    inputs: ['tracker'],
+    fn: (tracker) => STAGES.map((s) => ({ status: s, roles: tracker.filter((r) => r.status === s).length })).filter((d) => d.roles > 0),
+  });
+
+  dash.calc('by_company', {
+    title: 'Roles per company',
+    description: 'Roles per company, split into strong matches (score 70+) and the rest.',
+    inputs: ['tracker'],
+    fn: (tracker) => {
+      const m = new Map();
+      for (const r of tracker) {
+        const c = m.get(r.company) || { company: r.company, strong: 0, other: 0 };
+        if (+r.score >= 70) c.strong += 1; else c.other += 1;
+        m.set(r.company, c);
+      }
+      return [...m.values()].sort((a, b) => (b.strong + b.other) - (a.strong + a.other) || b.strong - a.strong);
+    },
+  });
+
+  const KPIS = { 'k-tracked': 'tracked', 'k-shortlisted': 'shortlisted', 'k-ready': 'ready', 'k-applied': 'applied', 'k-interviews': 'interviews', 'k-offers': 'offers',
+                 't-tracked': 'tracked', 't-shortlisted': 'shortlisted', 't-ready': 'ready', 't-applied': 'applied', 't-interviews': 'interviews' };
+  for (const [name, field] of Object.entries(KPIS)) {
+    dash.draw(name, (el) => {
+      const s = dash.data('summary');
+      if (s.status !== 'ok' || !s.data || !s.data.length) { el.textContent = '—'; return; }
+      el.textContent = d3.format(',')(s.data[0][field]);
+    });
+  }
+
+  function hbar(el, rows, keyField, segs, colorFor, labelFor) {
+    const w = Math.max(240, el.clientWidth);
+    const rowH = 26;
+    const h = rows.length * rowH + 8;
+    el.replaceChildren();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img')
+      .attr('aria-label', labelFor);
+    const g = svg.append('g');
+    const tmp = g.selectAll('text.k').data(rows).join('text').attr('class', 'k').text((r) => r[keyField]);
+    const left = Math.min(w * 0.45, (d3.max(tmp.nodes(), (n) => n.getComputedTextLength()) || 60) + 10);
+    tmp.remove();
+    const max = d3.max(rows, (r) => d3.sum(segs, (s) => r[s])) || 1;
+    const x = d3.scaleLinear().domain([0, max]).range([0, w - left - 30]);
+    const tip = d3.select(el).append('div').attr('class', 'ved-tip').style('display', 'none');
+    const row = g.selectAll('g.r').data(rows).join('g').attr('class', 'r').attr('transform', (r, i) => `translate(0,${i * rowH + 4})`);
+    row.append('text').attr('x', left - 8).attr('y', 13).attr('text-anchor', 'end').text((r) => r[keyField]);
+    for (const [i, s] of segs.entries()) {
+      row.append('rect')
+        .attr('x', (r) => left + x(d3.sum(segs.slice(0, i), (p) => r[p])))
+        .attr('y', 2).attr('height', rowH - 10)
+        .attr('width', (r) => Math.max(0, x(r[s])))
+        .style('fill', colorFor(s))
+        .on('pointermove', (ev, r) => {
+          const [mx, my] = d3.pointer(ev, el);
+          tip.style('display', null).style('left', Math.min(mx + 12, w - 160) + 'px').style('top', (my - 28) + 'px')
+            .text(`${r[keyField]}: ${segs.map((p) => `${r[p]} ${segs.length > 1 ? (p === 'strong' ? 'strong' : 'other') : 'roles'}`).join(', ')}`);
+        })
+        .on('pointerleave', () => tip.style('display', 'none'));
+    }
+    row.append('text').attr('class', 'val').attr('y', 13)
+      .attr('x', (r) => left + x(d3.sum(segs, (s) => r[s])) + 6)
+      .text((r) => d3.sum(segs, (s) => r[s]));
+  }
+
+  dash.draw('stages', (el) => {
+    const s = dash.data('by_status');
+    if (s.status !== 'ok' || !s.data) { el.textContent = s.status === 'error' ? 'Failed to load' : '—'; return; }
+    hbar(el, s.data, 'status', ['roles'], () => dash.colors[0], 'Bar chart of how many roles are at each pipeline stage');
+  });
+
+  dash.draw('companies', (el) => {
+    const s = dash.data('by_company');
+    if (s.status !== 'ok' || !s.data) { el.textContent = s.status === 'error' ? 'Failed to load' : '—'; return; }
+    hbar(el, s.data, 'company', ['strong', 'other'], (k) => (k === 'strong' ? dash.colors[0] : 'var(--cds-chart-muted)'),
+      'Stacked bar chart of roles per company, strong matches first');
+  });
+
+  const statusClass = (s) => (['Offer', 'Interview', 'Applied', 'Approved to apply', 'CV ready', 'Shortlisted', 'Outreach sent'].includes(s) ? 'good'
+    : s === 'Maybe' ? 'warn' : ['Rejected'].includes(s) ? 'bad' : '');
+
+  dash.draw('roles', {
+    mount: (el) => {
+      const sel = el.ownerDocument.getElementById('status-filter');
+      if (sel) sel.addEventListener('change', () => dash.draw('roles'));
+      return sel;
+    },
+    update: (el, sel) => {
+      const t = dash.data('tracker');
+      el.replaceChildren();
+      if (t.status !== 'ok') return;
+      const f = sel ? sel.value : '';
+      const rows = t.data
+        .filter((r) => !f || (f === 'active' ? !['Skipped', 'Withdrawn', 'Rejected'].includes(r.status) : r.status === f))
+        .slice().sort((a, b) => num(b.score) - num(a.score));
+      const doc = el.ownerDocument;
+      for (const r of rows) {
+        const tr = doc.createElement('tr');
+        tr.dataset.key = r.job_url;
+        const td = (cls) => { const c = doc.createElement('td'); if (cls) c.className = cls; tr.appendChild(c); return c; };
+        td('num').textContent = r.score;
+        const p = doc.createElement('span'); p.className = 'ved-pill ' + statusClass(r.status); p.textContent = r.status; td().appendChild(p);
+        td().textContent = r.company;
+        const a = doc.createElement('a'); a.href = r.job_url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.title; td().appendChild(a);
+        td().textContent = r.location;
+        const cov = num(r.coverage); td('num').textContent = cov === null ? '' : d3.format('.0%')(cov);
+        const cvc = td();
+        if (r.cv_url) { const c = doc.createElement('a'); c.href = r.cv_url; c.target = '_blank'; c.rel = 'noopener'; c.textContent = 'Open CV'; cvc.appendChild(c); }
+        td().textContent = r.pay_range;
+        el.appendChild(tr);
+      }
+    },
+  });
+</script>
